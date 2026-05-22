@@ -11,11 +11,11 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
-  late GoogleMapController _mapController;
+  GoogleMapController? _mapController;
   final Set<Marker> _markers = {};
   final Set<Polyline> _polylines = {};
+  final List<LatLng> _polylinePoints = [];
   LatLng? _currentLocation;
-  LatLng? _previousLocation;
   Timer? _locationTimer;
   bool _isFirstLoad = true;
 
@@ -75,7 +75,7 @@ class _MapPageState extends State<MapPage> {
 
   void _animateToCurrentLocation() {
     if (_currentLocation != null && _mapController != null) {
-      _mapController.animateCamera(
+      _mapController!.animateCamera(
         CameraUpdate.newLatLngZoom(_currentLocation!, 18),
       );
     }
@@ -97,36 +97,35 @@ class _MapPageState extends State<MapPage> {
         ),
       );
 
-      if (_previousLocation != null) {
-        _updatePolyline();
-      }
+      // Add current location to polyline points
+      _polylinePoints.add(_currentLocation!);
+      
+      // Update the polyline with all accumulated points
+      _updatePolyline();
 
-      _previousLocation = _currentLocation;
       setState(() {});
     }
   }
 
   void _updatePolyline() {
-    if (_previousLocation != null && _currentLocation != null) {
-      final polylineId =
-          'polyline_${DateTime.now().millisecondsSinceEpoch}';
+    if (_polylinePoints.length >= 2) {
+      _polylines.clear();
       _polylines.add(
         Polyline(
-          polylineId: PolylineId(polylineId),
-          points: [_previousLocation!, _currentLocation!],
+          polylineId: const PolylineId('tracking_polyline'),
+          points: List.from(_polylinePoints),
           color: Colors.blue,
           width: 5,
           geodesic: true,
         ),
       );
-      setState(() {});
     }
   }
 
   @override
   void dispose() {
     _locationTimer?.cancel();
-    _mapController.dispose();
+    _mapController?.dispose();
     super.dispose();
   }
 
