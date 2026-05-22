@@ -1,0 +1,26 @@
+name: geolocator_map
+description: A Flutter app that displays Google Maps with real-time location tracking and polyline visualization.
+
+publish_to: 'none'
+
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  google_maps_flutter: ^2.6.0
+  geolocator: ^11.0.0
+  cupertino_icons: ^1.0.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
